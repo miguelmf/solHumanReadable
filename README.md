@@ -10,6 +10,12 @@ This browser extension allows you to replace Solana wallet addresses, in solscan
 
 With this extension, you can monitor individuals or entities of interest, ensuring transparency and accountability in the realm of cryptocurrency. Whether you're concerned about tax evasion, money laundering, or simply curious about someone's financial dealings, this tool empowers you to take action.
 
+## Image
+
+Here is an image of the extension working.
+
+![solHumanReadable](solHumanReadable.png)
+
 ## TODO
 
 - Support for Firefox. As it is, this is for chrome-based (i.e., chrome, brave, etc). I want to add support for Firefox based browsers.
