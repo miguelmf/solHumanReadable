@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "solHumanReadable",
+  "version": "1.0",
+  "description": "Replace Solana addresses with human-readable names on solscan.io",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://solscan.io/*"
+      ],
+      "js": [
+        "content-scripts/content.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content-scripts/styles.css"
+      ],
+      "matches": [
+        "https://solscan.io/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html"
+  }
+}
