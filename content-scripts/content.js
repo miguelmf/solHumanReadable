@@ -109,71 +109,62 @@ linkElement.href = chrome.runtime.getURL("content-scripts/styles.css");
 
 document.head.appendChild(linkElement);
 
-const addressMapping = JSON.parse(localStorage.getItem("addressMapping")) || {};
+chrome.storage.local.get("addressMapping", (data) => {
+	const addressMapping = data.addressMapping || {};
 
-function generateHumanReadableName(address) {
-	if (addressMapping[address]) {
-		return addressMapping[address];
-	}
-	const positiveName =
-		positiveNames[Math.floor(Math.random() * positiveNames.length)];
-	const animal = animals[Math.floor(Math.random() * animals.length)];
-	const color = colors[Math.floor(Math.random() * colors.length)];
+	function generateHumanReadableName(address) {
+		if (addressMapping[address]) {
+			return addressMapping[address];
+		}
+		const positiveName =
+			positiveNames[Math.floor(Math.random() * positiveNames.length)];
+		const animal = animals[Math.floor(Math.random() * animals.length)];
+		const color = colors[Math.floor(Math.random() * colors.length)];
 
-	const colorClass = color;
+		const colorClass = color;
 
-	const humanReadableName = `<span class="${colorClass}">${animal}-${positiveName}-${color}</span>`;
+		const humanReadableName = `<span class="${colorClass}">${animal}-${positiveName}-${color}</span>`;
 
-	addressMapping[address] = humanReadableName;
+		addressMapping[address] = humanReadableName;
 
-	localStorage.setItem("addressMapping", JSON.stringify(addressMapping));
+		chrome.storage.local.set({ addressMapping: addressMapping });
 
-	return humanReadableName;
-}
-
-function replaceAddresses(element) {
-	const textContent = element.textContent;
-	if (stringsNotToReplace.includes(textContent)) {
-		return;
+		return humanReadableName;
 	}
 
-	const href = element.getAttribute("href");
-	const address = href.replace("/account/", "");
-	const humanReadableName = generateHumanReadableName(address);
-	element.innerHTML = humanReadableName;
-}
+	function replaceAddresses(element) {
+		const textContent = element.textContent;
+		if (stringsNotToReplace.includes(textContent)) {
+			return;
+		}
 
-// MutationObserver callback function
-function handleMutations(mutationsList, observer) {
-	for (const mutation of mutationsList) {
-		if (mutation.type === "childList") {
-			for (const node of mutation.addedNodes) {
-				if (node.nodeType === 1) {
-					const addressElements = node.querySelectorAll(
-						'a.text-link[href^="/account/"]',
-					);
-					addressElements.forEach(replaceAddresses);
+		const href = element.getAttribute("href");
+		const address = href.replace("/account/", "");
+		const humanReadableName = generateHumanReadableName(address);
+		element.innerHTML = humanReadableName;
+	}
+
+	// MutationObserver callback function
+	function handleMutations(mutationsList, observer) {
+		for (const mutation of mutationsList) {
+			if (mutation.type === "childList") {
+				for (const node of mutation.addedNodes) {
+					if (node.nodeType === 1) {
+						const addressElements = node.querySelectorAll(
+							'a.text-link[href^="/account/"]',
+						);
+						addressElements.forEach(replaceAddresses);
+					}
 				}
 			}
 		}
 	}
-}
 
-const observer = new MutationObserver(handleMutations);
-observer.observe(document.body, { childList: true, subtree: true });
+	const observer = new MutationObserver(handleMutations);
+	observer.observe(document.body, { childList: true, subtree: true });
 
-const initialAddressElements = document.querySelectorAll(
-	'a.text-link[href^="/account/"]',
-);
-initialAddressElements.forEach(replaceAddresses);
-
-chrome.runtime.onMessage.addListener(function (message) {
-	if (message.action === "clearData") {
-		clearExtensionData();
-	}
+	const initialAddressElements = document.querySelectorAll(
+		'a.text-link[href^="/account/"]',
+	);
+	initialAddressElements.forEach(replaceAddresses);
 });
-
-function clearExtensionData() {
-	localStorage.clear();
-	console.log("Extension data cleared!");
-}
