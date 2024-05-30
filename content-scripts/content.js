@@ -139,32 +139,47 @@ chrome.storage.local.get("addressMapping", (data) => {
 		}
 
 		const href = element.getAttribute("href");
+		if (!href.startsWith("/account/")) {
+			return;
+		}
 		const address = href.replace("/account/", "");
 		const humanReadableName = generateHumanReadableName(address);
 		element.innerHTML = humanReadableName;
 	}
 
+	function processAllAddresses() {
+		const addressElements = document.querySelectorAll(
+			'a.text-link[href^="/account/"]',
+		);
+		addressElements.forEach(replaceAddresses);
+	}
+
+	let timeout;
+	function debounceProcessAllAddresses() {
+		clearTimeout(timeout);
+		timeout = setTimeout(processAllAddresses, 0);
+	}
+
 	// MutationObserver callback function
 	function handleMutations(mutationsList, observer) {
+		let shouldProcess = false;
 		for (const mutation of mutationsList) {
-			if (mutation.type === "childList") {
-				for (const node of mutation.addedNodes) {
-					if (node.nodeType === 1) {
-						const addressElements = node.querySelectorAll(
-							'a.text-link[href^="/account/"]',
-						);
-						addressElements.forEach(replaceAddresses);
-					}
-				}
+			if (mutation.type === "childList" || mutation.type === "attributes") {
+				shouldProcess = true;
+				break;
 			}
+		}
+		if (shouldProcess) {
+			debounceProcessAllAddresses();
 		}
 	}
 
 	const observer = new MutationObserver(handleMutations);
-	observer.observe(document.body, { childList: true, subtree: true });
+	observer.observe(document.body, {
+		childList: true,
+		subtree: true,
+		attributes: true,
+	});
 
-	const initialAddressElements = document.querySelectorAll(
-		'a.text-link[href^="/account/"]',
-	);
-	initialAddressElements.forEach(replaceAddresses);
+	processAllAddresses();
 });
