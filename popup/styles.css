@@ -1,0 +1,37 @@
+body {
+  background-color: #060808;
+  color: #ebdbb2;
+  margin: 0;
+  padding: 20px;
+}
+
+button {
+  background-color: #98971a;
+  color: #ebdbb2;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1em;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #b8bb26;
+  color: #ebdbb2;
+}
+
+.clearData {
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.extensionTitle {
+  text-align: center;
+}
