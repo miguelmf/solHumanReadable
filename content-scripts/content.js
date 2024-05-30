@@ -1,25 +1,3 @@
-const positiveNames = [
-	"Sunshine",
-	"Smile",
-	"Laughter",
-	"Joy",
-	"Hope",
-	"Love",
-	"Peace",
-	"Kindness",
-	"Gratitude",
-	"Harmony",
-	"Success",
-	"Happiness",
-	"Bliss",
-	"Dream",
-	"Miracle",
-	"Blessing",
-	"Wonder",
-	"Radiance",
-	"Cheer",
-	"Serendipity",
-];
 const animals = [
 	"Octopus",
 	"Tiger",
@@ -48,59 +26,29 @@ const animals = [
 	"Snail",
 ];
 
-const colors = [
-	"red",
-	"blue",
-	"green",
-	"yellow",
-	"orange",
-	"purple",
-	"pink",
-	"brown",
-	"cyan",
-	"magenta",
-	"teal",
-	"lime",
-	"indigo",
-	"maroon",
-	"olive",
-	"navy",
-	"coral",
-	"gold",
-	"silver",
-	"black",
-	"aquamarine",
-	"lavender",
-	"crimson",
-	"orchid",
-	"turquoise",
-	"salmon",
-	"tan",
-	"slategray",
-	"violet",
-	"khaki",
-	"peru",
-	"darkslateblue",
-	"thistle",
-	"sienna",
-	"darkolivegreen",
-	"firebrick",
-	"mediumvioletred",
-	"royalblue",
-	"darkorchid",
-	"mediumseagreen",
-	"tomato",
-	"darkgoldenrod",
-	"darkkhaki",
-	"mediumslateblue",
-	"saddlebrown",
-	"mediumaquamarine",
-	"mediumorchid",
-	"darkseagreen",
-	"cornflowerblue",
+const actions = [
+	"Jumping",
+	"Flying",
+	"Climbing",
+	"Running",
+	"Swimming",
+	"Sleeping",
+	"Dancing",
+	"Singing",
+	"Eating",
+	"Hiding",
+	"Exploring",
+	"Building",
+	"Laughing",
+	"Dreaming",
+	"Playing",
 ];
 
-const stringsNotToReplace = ["Tensor Wallet", "Coinbase 2"];
+const stringsNotToReplace = [
+	"Tensor Wallet",
+	"Coinbase 2",
+	"Magic Eden V2 Authority",
+];
 
 const linkElement = document.createElement("link");
 linkElement.rel = "stylesheet";
@@ -116,14 +64,11 @@ chrome.storage.local.get("addressMapping", (data) => {
 		if (addressMapping[address]) {
 			return addressMapping[address];
 		}
-		const positiveName =
-			positiveNames[Math.floor(Math.random() * positiveNames.length)];
 		const animal = animals[Math.floor(Math.random() * animals.length)];
-		const color = colors[Math.floor(Math.random() * colors.length)];
+		const action = actions[Math.floor(Math.random() * actions.length)];
+		const number = Math.floor(Math.random() * 10);
 
-		const colorClass = color;
-
-		const humanReadableName = `<span class="${colorClass}">${animal}-${positiveName}-${color}</span>`;
+		const humanReadableName = `${number}-${animal}-${action}`;
 
 		addressMapping[address] = humanReadableName;
 
