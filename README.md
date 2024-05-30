@@ -19,6 +19,4 @@ Here is an image of the extension working.
 ## TODO
 
 - Support for Firefox. As it is, this is for chrome-based (i.e., chrome, brave, etc). I want to add support for Firefox based browsers.
-- There is an annoying but that, if you go back the page, some addresses will not be replaced. If you refresh the page, it fixes itself though.
-- Style the popup window.
 - Add support for disabling/enabling colors, and use other types of words. By default, it uses \[animals\]-\[positiveWord\]-\[color\]. Maybe allow to use \[plants\] instead or whatever.
