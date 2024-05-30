@@ -102,11 +102,11 @@ chrome.storage.local.get("addressMapping", (data) => {
 	let timeout;
 	function debounceProcessAllAddresses() {
 		clearTimeout(timeout);
-		timeout = setTimeout(processAllAddresses, 0);
+		timeout = setTimeout(processAllAddresses, 5);
 	}
 
-	// MutationObserver callback function
-	function handleMutations(mutationsList, observer) {
+	// I am using two different mutation observers. One for debouncing and one for instant mode. The debouncing one is to deal with cached pages, i.e., when changing to a page to which we have already been, for example, the previous page. This is, however, a bit slow due to the debounce. You can see the addresses being replaced/refreshed in the page. Hence the need for the "instant", which performs much faster, but does not work when going to a previous page. I couldn't make the "instant" work for previous pages, the page would just "hang" and CPU/memory would spike.
+	function handleMutationsForDebounce(mutationsList, observer) {
 		let shouldProcess = false;
 		for (const mutation of mutationsList) {
 			if (mutation.type === "childList" || mutation.type === "attributes") {
@@ -119,8 +119,30 @@ chrome.storage.local.get("addressMapping", (data) => {
 		}
 	}
 
-	const observer = new MutationObserver(handleMutations);
-	observer.observe(document.body, {
+	function handleMutationsForInstant(mutationsList, observer) {
+		for (const mutation of mutationsList) {
+			if (mutation.type === "childList") {
+				for (const node of mutation.addedNodes) {
+					if (node.nodeType === 1) {
+						const addressElements = node.querySelectorAll(
+							'a.text-link[href^="/account/"]',
+						);
+						addressElements.forEach(replaceAddresses);
+					}
+				}
+			}
+		}
+	}
+
+	const observerDebounce = new MutationObserver(handleMutationsForDebounce);
+	observerDebounce.observe(document.body, {
+		childList: true,
+		subtree: true,
+		attributes: true,
+	});
+
+	const observerInstant = new MutationObserver(handleMutationsForInstant);
+	observerInstant.observe(document.body, {
 		childList: true,
 		subtree: true,
 		attributes: true,
